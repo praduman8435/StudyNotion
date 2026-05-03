@@ -38,32 +38,33 @@ exports.sendOTP = async (req, res) => {
         })
         // console.log('Your otp - ', otp);
 
+        // create an entry for otp in DB
+        await OTP.create({ email, otp });
+
         const name = email.split('@')[0].split('.').map(part => part.replace(/\d+/g, '')).join(' ');
-        console.log(name);
 
         // send otp in mail
         await mailSender(email, 'OTP Verification Email', otpTemplate(otp, name));
 
-        // create an entry for otp in DB
-        const otpBody = await OTP.create({ email, otp });
-        // console.log('otpBody - ', otpBody);
-
-
-
-        // return response successfully
-        res.status(200).json({
+        const responsePayload = {
             success: true,
-            otp,
             message: 'Otp sent successfully'
-        });
+        };
+
+        // expose OTP only in local/dev mode for easier testing
+        if (process.env.NODE_ENV !== 'production') {
+            responsePayload.otp = otp;
+        }
+
+        return res.status(200).json(responsePayload);
     }
 
     catch (error) {
         console.log('Error while generating Otp - ', error);
-        res.status(200).json({
+        return res.status(500).json({
             success: false,
             message: 'Error while generating Otp',
-            error: error.mesage
+            error: error.message
         });
     }
 }
@@ -115,7 +116,7 @@ exports.signup = async (req, res) => {
 
 
         // if otp not found
-        if (!recentOtp || recentOtp.length == 0) {
+        if (!recentOtp) {
             return res.status(400).json({
                 success: false,
                 message: 'Otp not found in DB, please try again'
@@ -148,7 +149,7 @@ exports.signup = async (req, res) => {
         });
 
         // return success message
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: 'User Registered Successfully'
         });
@@ -157,10 +158,10 @@ exports.signup = async (req, res) => {
     catch (error) {
         console.log('Error while registering user (signup)');
         console.log(error)
-        res.status(401).json({
+        return res.status(500).json({
             success: false,
             error: error.message,
-            messgae: 'User cannot be registered , Please try again..!'
+            message: 'User cannot be registered , Please try again..!'
         })
     }
 }

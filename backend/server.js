@@ -38,14 +38,6 @@ app.use(
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`Server Started on PORT ${PORT}`);
-});
-
-// connections
-connectDB();
-cloudinaryConnect();
-
 // mount route
 app.use('/api/v1/auth', userRoutes);
 app.use('/api/v1/profile', profileRoutes);
@@ -62,4 +54,19 @@ app.get('/', (req, res) => {
     This is Default Route  
     <p>Everything is OK</p>
     </div>`);
-})
+});
+
+const startServer = async () => {
+    try {
+        await connectDB();
+        cloudinaryConnect();
+        app.listen(PORT, () => {
+            console.log(`Server Started on PORT ${PORT}`);
+        });
+    } catch (error) {
+        console.error('Server startup failed');
+        process.exit(1);
+    }
+};
+
+startServer();

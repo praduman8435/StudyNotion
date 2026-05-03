@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import ProgressBar from "@ramonak/react-progress-bar"
 import { useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 
 import { getUserEnrolledCourses } from "../../../services/operations/profileAPI"
 import Img from './../../common/Img';
@@ -11,6 +11,9 @@ import Img from './../../common/Img';
 export default function EnrolledCourses() {
   const { token } = useSelector((state) => state.auth)
   const navigate = useNavigate()
+  const location = useLocation()
+  const isPurchaseHistoryPage = location.pathname.includes("/purchase-history")
+  const pageTitle = isPurchaseHistoryPage ? "Purchase History" : "Enrolled Courses"
 
   const [enrolledCourses, setEnrolledCourses] = useState(null)
 
@@ -53,7 +56,9 @@ export default function EnrolledCourses() {
   if (enrolledCourses?.length == 0) {
     return (
       <p className="grid h-[50vh] w-full place-content-center text-center text-richblack-5 text-3xl">
-        You have not enrolled in any course yet.
+        {isPurchaseHistoryPage
+          ? "No purchases found yet."
+          : "You have not enrolled in any course yet."}
       </p>)
   }
 
@@ -61,7 +66,7 @@ export default function EnrolledCourses() {
 
   return (
     <>
-      <div className="text-4xl text-richblack-5 font-boogaloo text-center sm:text-left">Enrolled Courses</div>
+      <div className="text-4xl text-richblack-5 font-boogaloo text-center sm:text-left">{pageTitle}</div>
       {
         <div className="my-8 text-richblack-5">
           {/* Headings */}

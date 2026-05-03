@@ -4,8 +4,8 @@ const mailSender = async (email, title, body) => {
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
-      port: 465,
-      secure: true,
+      port: Number(process.env.MAIL_PORT) || 465,
+      secure: process.env.MAIL_SECURE === "true",
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
@@ -23,6 +23,8 @@ const mailSender = async (email, title, body) => {
     return info;
   } catch (error) {
     console.log("Error while sending mail (mailSender) - ", email);
+    console.log(error);
+    throw error;
   }
 };
 
