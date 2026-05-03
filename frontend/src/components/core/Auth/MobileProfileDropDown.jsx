@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 
 import useOnClickOutside from "../../../hooks/useOnClickOutside";
 import Img from "./../../common/Img";
-import { apiConnector } from "../../../services/apiConnector";
 
 import { logout } from "../../../services/operations/authAPI";
 
@@ -44,12 +43,6 @@ export default function MobileProfileDropDown() {
     try {
       setLoading(true);
       const res = await fetchCourseCategories();
-      // const result = await apiConnector("GET", categories.CATEGORIES_API);
-      const result = await apiConnector(
-        "GET",
-        "http://localhost:5000/api/v1/course/showAllCategories"
-      );
-      console.log("Printing Sublinks result:", result);
       setSubLinks(res);
     } catch (error) {
       console.log("Could not fetch the category list = ", error);

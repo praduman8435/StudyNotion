@@ -118,7 +118,7 @@ export function login(email, password, navigate) {
       console.log("LOGIN API ERROR.......", error)
       toast.error(
         error.response?.data?.message ||
-        "Login failed. Check if backend is running on port 5000."
+        "Login failed. Please check your email/password or backend availability."
       )
     }
     dispatch(setLoading(false))

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, matchPath, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { apiConnector } from "../../services/apiConnector";
 import { NavbarLinks } from "../../../data/navbar-links";
 import studyNotionLogo from "../../assets/Logo/Logo-Full-Light.png";
 import { fetchCourseCategories } from "./../../services/operations/courseDetailsAPI";
@@ -27,12 +26,6 @@ const Navbar = () => {
     try {
       setLoading(true);
       const res = await fetchCourseCategories();
-      // const result = await apiConnector("GET", categories.CATEGORIES_API);
-      const result = await apiConnector(
-        "GET",
-        `${import.meta.env.VITE_APP_BASE_URL}/course/showAllCategories`
-      );
-      console.log("Printing Sublinks result:", result);
       setSubLinks(res);
     } catch (error) {
       console.log("Could not fetch the category list = ", error);
