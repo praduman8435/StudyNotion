@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const axios = require("axios");
 
 const buildTransportOptions = ({ host, port, secure }) => ({
   host,
@@ -19,6 +20,38 @@ const buildTransportOptions = ({ host, port, secure }) => ({
 const isYahooHost = (host = "") => /yahoo\.com$/i.test(host);
 
 const mailSender = async (email, title, body) => {
+  // Prefer Brevo HTTP API on cloud hosts where SMTP ports may be blocked.
+  if (process.env.BREVO_API_KEY) {
+    try {
+      const fromEmail =
+        process.env.MAIL_FROM_EMAIL || process.env.MAIL_USER || "no-reply@example.com";
+      const fromName = process.env.MAIL_FROM_NAME || "StudyNotion";
+
+      const response = await axios.post(
+        "https://api.brevo.com/v3/smtp/email",
+        {
+          sender: { email: fromEmail, name: fromName },
+          to: [{ email }],
+          subject: title,
+          htmlContent: body,
+        },
+        {
+          headers: {
+            "api-key": process.env.BREVO_API_KEY,
+            "content-type": "application/json",
+          },
+          timeout: 20000,
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log("Error while sending via Brevo API - ", email);
+      console.log(error?.response?.data || error?.message || error);
+      throw error;
+    }
+  }
+
   const host = process.env.MAIL_HOST;
   const primaryPort = Number(process.env.MAIL_PORT) || 465;
   const primarySecure = process.env.MAIL_SECURE === "true";
