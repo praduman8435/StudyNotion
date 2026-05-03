@@ -81,8 +81,10 @@ export async function buyCourse(token, coursesId, userDetails, navigate, dispatc
     }
     catch (error) {
         console.log("PAYMENT API ERROR.....", error);
-        toast.error(error.response?.data?.message);
-        // toast.error("Could not make Payment");
+        toast.error(
+            error.response?.data?.message ||
+            "Could not start payment. Please try again."
+        );
     }
     toast.dismiss(toastId);
 }

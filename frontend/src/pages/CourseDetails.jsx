@@ -138,6 +138,10 @@ function CourseDetails() {
 
   // Buy Course handler
   const handleBuyCourse = () => {
+    if (user && user?.accountType === ACCOUNT_TYPE.INSTRUCTOR) {
+      toast.error("Instructor accounts cannot purchase courses. Please use a Student account.");
+      return;
+    }
     if (token) {
       const coursesId = [courseId]
       buyCourse(token, coursesId, user, navigate, dispatch)
