@@ -23,7 +23,7 @@ exports.resetPasswordToken = async (req, res) => {
         const token = crypto.randomBytes(20).toString("hex");
 
         // update user by adding token & token expire date
-        const updatedUser = await User.findOneAndUpdate(
+        await User.findOneAndUpdate(
             { email: email },
             { token: token, resetPasswordTokenExpires: Date.now() + 5 * 60 * 1000 },
             { new: true }); // by marking true, it will return updated user
@@ -33,8 +33,18 @@ exports.resetPasswordToken = async (req, res) => {
         const clientUrl = (process.env.CLIENT_URL || "http://localhost:5173").replace(/\/+$/, "");
         const url = `${clientUrl}/update-password/${token}`;
 
-        // send email containing url
-        await mailSender(email, 'Password Reset Link', `Password Reset Link : ${url}`);
+        try {
+            // send email containing url
+            await mailSender(email, 'Password Reset Link', `Password Reset Link : ${url}`);
+        } catch (mailError) {
+            // rollback token if email sending fails
+            await User.findOneAndUpdate(
+                { email: email },
+                { token: null, resetPasswordTokenExpires: null },
+                { new: true }
+            );
+            throw mailError;
+        }
 
         // return succes response
         res.status(200).json({
