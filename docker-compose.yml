@@ -1,7 +1,7 @@
 services:
   # 🗄️ MongoDB Database
   mongo:
-    image: mongo:latest
+    image: mongo:7.0
     container_name: studynotion-mongo
     restart: always
     ports:

@@ -37,7 +37,7 @@ export function sendOtp(email, navigate) {
       toast.success("OTP Sent Successfully");
     } catch (error) {
       console.log("SENDOTP API ERROR --> ", error);
-      toast.error(error.response.data?.message);
+      toast.error(error.response?.data?.message || "Could not send OTP");
       // toast.error("Could Not Send OTP")
     }
     dispatch(setLoading(false));
@@ -72,8 +72,7 @@ export function signUp(accountType, firstName, lastName, email, password, confir
       navigate("/login");
     } catch (error) {
       console.log("SIGNUP API ERROR --> ", error);
-      // toast.error(error.response.data.message);
-      toast.error("Invalid OTP");
+      toast.error(error.response?.data?.message || "Signup failed");
       // navigate("/signup")
     }
     dispatch(setLoading(false))
@@ -117,7 +116,10 @@ export function login(email, password, navigate) {
       navigate("/dashboard/my-profile");
     } catch (error) {
       console.log("LOGIN API ERROR.......", error)
-      toast.error(error.response?.data?.message)
+      toast.error(
+        error.response?.data?.message ||
+        "Login failed. Check if backend is running on port 5000."
+      )
     }
     dispatch(setLoading(false))
     toast.dismiss(toastId)

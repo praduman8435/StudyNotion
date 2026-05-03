@@ -168,6 +168,7 @@ function App() {
             <>
               <Route path="dashboard/cart" element={<Cart />} />
               <Route path="dashboard/enrolled-courses" element={<EnrolledCourses />} />
+              <Route path="dashboard/purchase-history" element={<EnrolledCourses />} />
             </>
           )}
 

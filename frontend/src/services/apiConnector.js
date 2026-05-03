@@ -1,6 +1,8 @@
 import axios from "axios"
 
-export const axiosInstance = axios.create({});
+export const axiosInstance = axios.create({
+    timeout: 10000,
+});
 
 export const apiConnector = (method, url, bodyData, headers, params) => {
     return axiosInstance({
