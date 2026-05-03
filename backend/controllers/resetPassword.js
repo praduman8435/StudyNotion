@@ -29,8 +29,9 @@ exports.resetPasswordToken = async (req, res) => {
             { new: true }); // by marking true, it will return updated user
 
 
-        // create url
-        const url = `https://study-notion-mern-stack.netlify.app/update-password/${token}`;
+        // create reset URL for the active frontend deployment
+        const clientUrl = (process.env.CLIENT_URL || "http://localhost:5173").replace(/\/+$/, "");
+        const url = `${clientUrl}/update-password/${token}`;
 
         // send email containing url
         await mailSender(email, 'Password Reset Link', `Password Reset Link : ${url}`);
